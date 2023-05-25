@@ -1,14 +1,26 @@
-import { useContext } from "react";
-import { BasketContext } from "../../../contexts/BaskteContext";
+import { useSelector, useDispatch } from "react-redux";
 import { Alert, CardMedia, Grid, Button, Typography } from "@mui/material";
 import { Layout } from "../../../components/Layout";
 
 export const BasketPage = () => {
-  const { items, isExistItem, addToBasket } = useContext(BasketContext);
+  const dispatch = useDispatch();
+  const items = useSelector((state) => state.basket.items);
+  const isExistItem = (itemId) => items.some((item) => item.id === itemId);
+
+  const handleAddToBasket = (item) => {
+    dispatch({ type: "ADD_TO_BASKET", payload: item });
+  };
+
+  const handleRemoveFromBasket = (itemId) => {
+    dispatch({ type: "REMOVE_FROM_BASKET", payload: itemId });
+  };
+
   const total = items.reduce((acc, item) => acc + item.price, 0);
+
   return (
     <Layout>
-      <Grid>
+      <Grid container>
+      <Grid item>
         {items.length < 1 && (
           <Alert severity="error">You have not any items in your basket </Alert>
         )}
@@ -24,7 +36,11 @@ export const BasketPage = () => {
                   title="green iguana"
                 />
                 <Button
-                  onClick={() => addToBasket(item)}
+                  onClick={() =>
+                    isExistItem(item.id)
+                      ? handleRemoveFromBasket(item.id)
+                      : handleAddToBasket(item)
+                  }
                   sx={
                     isExistItem(item.id)
                       ? {
@@ -47,7 +63,7 @@ export const BasketPage = () => {
                   size="small"
                 >
                   {isExistItem(item.id)
-                    ? "Remove from basker"
+                    ? "Remove from basket"
                     : "Add to basket"}
                 </Button>
               </li>
@@ -55,7 +71,7 @@ export const BasketPage = () => {
           </ul>
         )}
       </Grid>
-      <Grid marginTop={10}>
+      <Grid item marginTop={10}>
         {items.length > 0 && (
           <Typography
             fontSize={22}
@@ -64,10 +80,10 @@ export const BasketPage = () => {
             component="div"
             lineHeight={1}
           >
-            Total:{total}
+            Total: {total}$
           </Typography>
         )}
-      </Grid>
+      </Grid></Grid>
     </Layout>
   );
 };

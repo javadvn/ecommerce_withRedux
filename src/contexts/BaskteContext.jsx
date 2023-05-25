@@ -1,33 +1,32 @@
-import { createContext, useState } from "react";
+import { createStore } from "redux";
 
-export const BasketContext = createContext();
-
-export const BasketProvider = ({ children }) => {
-  let basketFromStorage = null;
-  if (localStorage.getItem("basket") !== null) {
-    basketFromStorage = JSON.parse(localStorage.getItem("basket"));
-  }
-  const [items, setItems] = useState(basketFromStorage ?? []);
-  const isExistItem = (id) => items.some((item) => item.id == id);
-  const addToBasket = (data) => {
-    if (isExistItem(data.id)) {
-      const newItems = items.filter((x) => x.id !== data.id);
-      setItems(newItems);
-      newItems.length > 0
-        ? localStorage.setItem("basket", JSON.stringify(newItems))
-        : localStorage.removeItem("basket");
-    } else {
-      setItems((oldData) => [...oldData, data]);
-      localStorage.setItem("basket", JSON.stringify([...items, data]));
-    }
-  };
-  const values = {
-    items,
-    setItems,
-    addToBasket,
-    isExistItem,
-  };
-  return (
-    <BasketContext.Provider value={values}>{children}</BasketContext.Provider>
-  );
+// Define the initial state
+const initialState = {
+  items: [],
 };
+
+// Define the reducer function
+const basketReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case "ADD_TO_BASKET":
+      const updatedItems = state.items.some((item) => item.id === action.payload.id)
+        ? state.items.filter((item) => item.id !== action.payload.id)
+        : [...state.items, action.payload];
+
+      return {
+        ...state,
+        items: updatedItems,
+      };
+
+    default:
+      return state;
+  }
+};
+
+// Create the Redux store
+const store = createStore(basketReducer);
+
+export default store;
+
+
+

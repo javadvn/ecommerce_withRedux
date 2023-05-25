@@ -10,11 +10,16 @@ import {
 import { CatchingPokemon } from "@mui/icons-material";
 import { useContext } from "react";
 import { AuthContext } from "../contexts/AuthContext";
-import { BasketContext } from "../contexts/BaskteContext";
+
+import { useSelector } from "react-redux";
+
+
+
 export const Layout = ({ children }) => {
   const navigate = useNavigate();
   const { loggedIn, handlerLogInOut } = useContext(AuthContext);
-  const { items } = useContext(BasketContext);
+  // Access the `items` from BasketContext
+  const items = useSelector((state) => state.items);
   return (
     <>
       <AppBar position="static">

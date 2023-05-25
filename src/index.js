@@ -6,8 +6,10 @@ import { BrowserRouter as Router } from "react-router-dom";
 import { QueryClientProvider, QueryClient } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 import { AuthProvider } from "./contexts/AuthContext";
-import { BasketProvider } from "./contexts/BaskteContext";
+import { Provider } from "react-redux";
+import store from  "./contexts/BaskteContext"
 
+import BasketProvider from  "./contexts/BaskteContext"
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -20,13 +22,15 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
+      <Provider store={store}>
       <AuthProvider>
-        <BasketProvider>
+      <BasketProvider>
           <Router>
             <App />
           </Router>
-        </BasketProvider>
+         </BasketProvider>
       </AuthProvider>
+      </Provider>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   </React.StrictMode>
